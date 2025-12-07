@@ -16,8 +16,10 @@ class Expense(Base):
     __tablename__ = 'expense'
     id:Mapped[int] = mapped_column(primary_key=True)
     id_category:Mapped[int] = mapped_column(ForeignKey('expense_category.id'))
+    id_user:Mapped[int] = mapped_column(ForeignKey('user.id'))
     name:Mapped[str] = mapped_column(String(50))
     createAt:Mapped[DateTime] = mapped_column(DateTime(timezone=True),server_default=func.now())
     
     #Relationships
     expense_category:Mapped['ExpenseCategory'] = relationship(back_populates='expenses')
+    user:Mapped['User'] = relationship(back_populates='expenses')
