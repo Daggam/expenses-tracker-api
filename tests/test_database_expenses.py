@@ -1,5 +1,5 @@
-from src.models.expenses import Expense,ExpenseCategory
-from src.models.users import User
+from src.db.expenses import Expense,ExpenseCategory
+from src.db.users import User
 import datetime
 import pytest
 
