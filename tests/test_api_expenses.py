@@ -26,4 +26,4 @@ def test_get_expenses(client,create_expense):
     assert response.status_code == 200
     expenses = response.json()
     assert expenses is not None
-    assert len(expenses) == 1
+    assert len(expenses) == 3

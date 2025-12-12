@@ -4,7 +4,7 @@ from src.db.users import User
 
 def test_usuario(db_session):
     usuarios = db_session.query(User).all()
-    assert len(usuarios) == 1
+    assert len(usuarios) == 2
     assert usuarios[0].id == 1
     assert usuarios[0].username == "daggam"
 
@@ -20,7 +20,7 @@ def test_categories(db_session,id_cat,categoria):
 
 def test_create_expense(create_expense,db_session):
     expenses = db_session.query(Expense).all()
-    assert len(expenses) == 1
-    assert expenses[0].name == "Expensa 1"
+    assert len(expenses) == 4
+    assert expenses[0].name == "Expensa 1 U1"
     assert expenses[0].user.username == "daggam"
     assert expenses[0].expense_category.category == "Prueba1"

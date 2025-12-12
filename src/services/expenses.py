@@ -10,7 +10,7 @@ class ExpenseServices:
     def __init__(self, session:Session):
         self._db = session
     
-    def get_expenses(self,range_type:ExpenseRangeType,start_date:PastDate | None, end_date:PastDate | None) -> List[Expense]:
+    def get_expenses(self,range_type:ExpenseRangeType,start_date:PastDate | None, end_date:PastDate | None,current_user_id:int) -> List[Expense]:        
         today = date.today()
         match range_type:
             case ExpenseRangeType.PAST_WEEK:
@@ -22,7 +22,7 @@ class ExpenseServices:
             #Podría hacer un chequeo si start date <= end_date
         # Pues cuando utilizamos date.today nos da como día YY-mm-dd 00:00:00, y a la base de datos no le sirve mucho, es como si estuviesemos checando ayer.
         today+= timedelta(days=1)
-        expenses = self._db.query(Expense).filter(Expense.createAt <= (start_date or today), Expense.createAt >= end_date).all() #Peligroso si me preguntas (Por el start_date or today)
+        expenses = self._db.query(Expense).filter(Expense.createAt <= (start_date or today), Expense.createAt >= end_date,Expense.id_user == current_user_id).all() #Peligroso si me preguntas (Por el start_date or today)
         return expenses
 
     def create_expense(self,name:str,category:str,user_id:int) -> Expense | None:

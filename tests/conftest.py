@@ -23,8 +23,11 @@ def setup_database():
                    ExpenseCategory(category='Prueba3')]
      session.add_all(categorias)
      ## Creamos usuarios de prueba
-     user = User(username='daggam',email='benjaminvilla409@gmail.com',password_hash='123456')
-     session.add(user)
+     users = [
+         User(username='daggam',email='benjaminvilla409@gmail.com',password_hash='123456'),
+         User(username='benja',email='daggamarg@gmail.com',password_hash='123456'),
+         ]
+     session.add_all(users)
      session.commit()
     yield
 
@@ -43,7 +46,10 @@ def db_session():
 @pytest.fixture
 def create_expense(db_session):
     expenses = [
-        Expense(name='Expensa 1', id_user=1,id_category=1)
+        Expense(name='Expensa 1 U1', id_user=1,id_category=1),
+        Expense(name='Expensa 2 U1', id_user=1,id_category=2),
+        Expense(name='Expensa 3 U1', id_user=1,id_category=2),
+        Expense(name='Expensa 1 U2', id_user=2,id_category=1)
     ]
 
     db_session.add_all(expenses)

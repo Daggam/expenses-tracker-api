@@ -30,4 +30,4 @@ def get_expenses(
             status_code=400,
             detail='La opción custom debe tener start_date y end_date'
         )
-    return service.get_expenses(date_range,start_date,end_date)
+    return service.get_expenses(date_range,start_date,end_date,current_user_id=1)
