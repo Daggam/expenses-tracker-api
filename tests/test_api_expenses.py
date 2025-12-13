@@ -40,3 +40,10 @@ def test_delete_expense(client,create_expense,id_expense,status_code):
     assert response.status_code == 200
     expenses = response.json()
     assert len(expenses) == (2 if status_code == 200 else 3)
+
+#Actualización de expensas
+@pytest.mark.parametrize(("id_expense"),[(1),(2),(3)])
+def test_update_expense(client,create_expense,id_expense):
+    response = client.put(f"/api/v1/expenses/{id_expense}",json={"name":"hola","category":"Prueba1"})
+    assert response.status_code == 200
+
