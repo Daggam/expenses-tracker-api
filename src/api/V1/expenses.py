@@ -53,7 +53,7 @@ def delete_expense(
         )
     return 
 
-@router.put("/{expense_id}")
+@router.patch("/{expense_id}")
 def update_expense(
     expense_id:int,
     expense_in:ExpenseUpdate,
