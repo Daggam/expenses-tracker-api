@@ -39,4 +39,10 @@ class ExpenseServices:
         self._db.refresh(expense)
         return expense        
 
-
+    def delete_expense(self,expense_id:int) -> bool:
+        expense = self._db.query(Expense).filter(Expense.id == expense_id).one_or_none()
+        if expense is None:
+            return False
+        self._db.delete(expense)
+        self._db.commit()
+        return True

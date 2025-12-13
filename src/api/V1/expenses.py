@@ -38,3 +38,16 @@ def get_expenses(
             detail='La opción custom debe tener start_date y end_date'
         )
     return service.get_expenses(date_range,start_date,end_date,current_user_id=current_user)
+
+@router.delete("/{expense_id}")
+def delete_expense(
+    expense_id:int,
+    service:ExpenseServices = Depends(get_expense_service)
+):
+    is_deleted = service.delete_expense(expense_id)
+    if not is_deleted:
+        raise HTTPException(
+            status_code=404,
+            detail='No existe un expense con tal id.'
+        )
+    return 
