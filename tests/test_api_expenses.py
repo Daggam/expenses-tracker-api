@@ -31,3 +31,12 @@ def test_get_expenses(client,create_expense):
     expenses = response.json()
     assert expenses is not None
     assert len(expenses) == 3
+
+@pytest.mark.parametrize(("id_expense","status_code"),[(1,200),(99,404)])
+def test_delete_expense(client,create_expense,id_expense,status_code):
+    response = client.delete(f"/api/v1/expenses/{id_expense}")
+    assert response.status_code == status_code
+    response = client.get("/api/v1/expenses/?date_range=past_week")
+    assert response.status_code == 200
+    expenses = response.json()
+    assert len(expenses) == (2 if status_code == 200 else 3)
