@@ -16,8 +16,13 @@ def create_expense(
     current_user:CurrentUser,
     service:ExpenseServices = Depends(get_expense_service)
 ):
-
-    return service.create_expense(**expense_in.__dict__,user_id=current_user) #SOLO POR AHORA SERÁ user_id=1
+    expense = service.create_expense(**expense_in.__dict__,user_id=current_user) #SOLO POR AHORA SERÁ user_id=1
+    if expense is None:
+        raise HTTPException(
+            status_code=422,
+            detail="La categoria no existe."
+        )
+    return expense
 
 @router.get("/")
 def get_expenses(
