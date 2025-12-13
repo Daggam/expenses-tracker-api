@@ -42,9 +42,10 @@ def get_expenses(
 @router.delete("/{expense_id}")
 def delete_expense(
     expense_id:int,
-    service:ExpenseServices = Depends(get_expense_service)
+    current_user:CurrentUser,
+    service:ExpenseServices = Depends(get_expense_service),
 ):
-    is_deleted = service.delete_expense(expense_id)
+    is_deleted = service.delete_expense(expense_id,current_user)
     if not is_deleted:
         raise HTTPException(
             status_code=404,
