@@ -21,6 +21,10 @@ def test_create_expense(client):
     assert created_expense is not None
     assert created_expense['name'] == "Expensa 1"
 
+def test_error_create_expense(client):
+    response = client.post('/api/v1/expenses/',json={"name": "Expensa 1","category": "Prueba"})
+    assert response.status_code == 422
+
 def test_get_expenses(client,create_expense):
     response = client.get("/api/v1/expenses/?date_range=past_week")
     assert response.status_code == 200
