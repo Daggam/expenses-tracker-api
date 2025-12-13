@@ -4,7 +4,7 @@ from pydantic import PastDate
 from sqlalchemy.orm import Session
 from src.db.expenses import Expense,ExpenseCategory
 from src.db.users import User
-from src.models.expenses import ExpenseRangeType
+from src.models.expenses import ExpenseIn, ExpenseRangeType, ExpenseUpdate
 
 class ExpenseServices:
     def __init__(self, session:Session):
@@ -46,3 +46,23 @@ class ExpenseServices:
         self._db.delete(expense)
         self._db.commit()
         return True
+
+    def update_expense(self, expense_id:int,expense_in:ExpenseUpdate,user_id:int) -> Expense | None:
+        #Tendría que detectar la forma para saber si la expensa le pertenece al usuario actual(es decir, si no lo es, es un http 403)
+        expense = self._db.query(Expense).filter(Expense.id == expense_id,Expense.id_user == user_id).one_or_none()
+        
+        if expense is None:
+            return None
+        #HAY QUE TENER CUIDADO CON LOS NONE's (Por eso lo excluimos)
+        update_attr = expense_in.model_dump(exclude_unset=True)
+
+        if "name" in update_attr:
+            expense.name = update_attr["name"]
+        if "category" in update_attr:
+            expense_category = self._db.query(ExpenseCategory).filter(ExpenseCategory.category == update_attr["category"]).one_or_none()
+            if expense_category is None:
+                return None
+            expense.expense_category = expense_category
+
+        self._db.commit()
+        return expense

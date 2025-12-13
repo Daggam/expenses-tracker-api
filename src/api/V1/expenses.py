@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, Query,HTTPException
 from typing import Annotated
 from pydantic import PastDate
-from src.models.expenses import ExpenseRangeType,ExpenseIn
+from src.models.expenses import ExpenseRangeType,ExpenseIn, ExpenseUpdate
 from src.services.expenses import ExpenseServices
-from src.db.db import get_db
+from src.db.db import SessionFactory
 from src.api.deps import CurrentUser
 router = APIRouter(tags=["expenses"],prefix="/expenses")
 
 def get_expense_service():
-    return ExpenseServices(session=get_db())
+    return ExpenseServices(session=SessionFactory())
 
 @router.post("/")
 def create_expense(
@@ -51,3 +51,23 @@ def delete_expense(
             detail='No existe un expense con tal id.'
         )
     return 
+
+@router.put("/{expense_id}")
+def update_expense(
+    expense_id:int,
+    expense_in:ExpenseUpdate,
+    current_user:CurrentUser,
+    service:ExpenseServices = Depends(get_expense_service)
+):
+    if len(expense_in.model_fields_set) == 0:
+        raise HTTPException(
+            status_code=422,
+            detail="El modelo de entrada no debe ser vacío."
+        )
+    expense = service.update_expense(expense_id,expense_in,current_user)
+    if expense is None:
+        raise HTTPException(
+            status_code=422,
+            detail="La expensa no existe o la categoria no existe."
+        )
+    return expense

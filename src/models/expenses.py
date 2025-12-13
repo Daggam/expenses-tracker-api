@@ -16,3 +16,7 @@ class ExpenseOut(BaseModel):
 class ExpenseIn(BaseModel):
     name:str
     category:str
+
+class ExpenseUpdate(BaseModel):
+    name:str|None = None
+    category:str|None = None
