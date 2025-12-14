@@ -31,13 +31,13 @@ class ExpenseServices:
         expenses = self._db.query(Expense).filter(Expense.createAt <= (start_date or today), Expense.createAt >= end_date,Expense.id_user == current_user_id).all() #Peligroso si me preguntas (Por el start_date or today)
         return expenses
 
-    def create_expense(self,name:str,category:str,user_id:int) -> Expense | None:
-        expense_category = self._db.query(ExpenseCategory).filter(ExpenseCategory.category == category).first()
+    def create_expense(self,expense_in:ExpenseIn,user_id:int) -> Expense | None:
+        expense_category = self._db.query(ExpenseCategory).filter(ExpenseCategory.category == expense_in.category).first()
         user = self._db.query(User).filter(User.id == user_id).first()
         if expense_category is None: #or user is None:
-            raise ExpenseCategoryNotFoundError(category)
+            raise ExpenseCategoryNotFoundError(expense_in.category)
 
-        expense = Expense(name=name)
+        expense = Expense(name=expense_in.name)
         expense.expense_category = expense_category
         expense.user = user
         self._db.add(expense)
