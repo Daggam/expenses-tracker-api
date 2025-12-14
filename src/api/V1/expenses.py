@@ -17,11 +17,6 @@ def create_expense(
     service:ExpenseServices = Depends(get_expense_service)
 ):
     expense = service.create_expense(**expense_in.__dict__,user_id=current_user) #SOLO POR AHORA SERÁ user_id=1
-    if expense is None:
-        raise HTTPException(
-            status_code=422,
-            detail="La categoria no existe."
-        )
     return expense
 
 @router.get("/")
@@ -32,11 +27,6 @@ def get_expenses(
     end_date: Annotated[PastDate | None, Query(description='Necesario si date_range es custom')] = None,
     service:ExpenseServices = Depends(get_expense_service)
 ):
-    if date_range == ExpenseRangeType.CUSTOM and (start_date is None or end_date is None):
-        raise HTTPException(
-            status_code=400,
-            detail='La opción custom debe tener start_date y end_date'
-        )
     return service.get_expenses(date_range,start_date,end_date,current_user_id=current_user)
 
 @router.delete("/{expense_id}")
@@ -46,11 +36,6 @@ def delete_expense(
     service:ExpenseServices = Depends(get_expense_service),
 ):
     is_deleted = service.delete_expense(expense_id,current_user)
-    if not is_deleted:
-        raise HTTPException(
-            status_code=404,
-            detail='No existe un expense con tal id.'
-        )
     return 
 
 @router.patch("/{expense_id}")
@@ -60,15 +45,5 @@ def update_expense(
     current_user:CurrentUser,
     service:ExpenseServices = Depends(get_expense_service)
 ):
-    if len(expense_in.model_fields_set) == 0:
-        raise HTTPException(
-            status_code=422,
-            detail="El modelo de entrada no debe ser vacío."
-        )
     expense = service.update_expense(expense_id,expense_in,current_user)
-    if expense is None:
-        raise HTTPException(
-            status_code=422,
-            detail="La expensa no existe o la categoria no existe."
-        )
     return expense

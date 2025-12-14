@@ -5,12 +5,18 @@ from sqlalchemy.orm import Session
 from src.db.expenses import Expense,ExpenseCategory
 from src.db.users import User
 from src.models.expenses import ExpenseIn, ExpenseRangeType, ExpenseUpdate
-
+from src.core.exceptions import BaseAPIException,ExpenseCategoryNotFoundError, ExpenseNotFoundError,InvalidModelError
 class ExpenseServices:
     def __init__(self, session:Session):
         self._db = session
     
     def get_expenses(self,range_type:ExpenseRangeType,start_date:PastDate | None, end_date:PastDate | None,current_user_id:int) -> List[Expense]:        
+        if range_type == ExpenseRangeType.CUSTOM and (start_date is None or end_date is None):
+            raise BaseAPIException(
+                message="Custom option should have star_date and end_date",
+                status_code=422,
+            )
+        
         today = date.today()
         match range_type:
             case ExpenseRangeType.PAST_WEEK:
@@ -28,8 +34,8 @@ class ExpenseServices:
     def create_expense(self,name:str,category:str,user_id:int) -> Expense | None:
         expense_category = self._db.query(ExpenseCategory).filter(ExpenseCategory.category == category).first()
         user = self._db.query(User).filter(User.id == user_id).first()
-        if expense_category is None or user is None:
-            return None
+        if expense_category is None: #or user is None:
+            raise ExpenseCategoryNotFoundError(category)
 
         expense = Expense(name=name)
         expense.expense_category = expense_category
@@ -42,17 +48,19 @@ class ExpenseServices:
     def delete_expense(self,expense_id:int,user_id:int) -> bool:
         expense = self._db.query(Expense).filter(Expense.id == expense_id,Expense.id_user == user_id).one_or_none()
         if expense is None:
-            return False
+            raise ExpenseNotFoundError(expense_id)
         self._db.delete(expense)
         self._db.commit()
         return True
 
     def update_expense(self, expense_id:int,expense_in:ExpenseUpdate,user_id:int) -> Expense | None:
+        if len(expense_in.model_fields_set) == 0:
+            raise InvalidModelError()
         #Tendría que detectar la forma para saber si la expensa le pertenece al usuario actual(es decir, si no lo es, es un http 403)
         expense = self._db.query(Expense).filter(Expense.id == expense_id,Expense.id_user == user_id).one_or_none()
         
         if expense is None:
-            return None
+            raise ExpenseNotFoundError(expense_id)
         #HAY QUE TENER CUIDADO CON LOS NONE's (Por eso lo excluimos)
         update_attr = expense_in.model_dump(exclude_unset=True)
 
@@ -61,7 +69,7 @@ class ExpenseServices:
         if "category" in update_attr:
             expense_category = self._db.query(ExpenseCategory).filter(ExpenseCategory.category == update_attr["category"]).one_or_none()
             if expense_category is None:
-                return None
+                raise ExpenseCategoryNotFoundError(update_attr["category"])
             expense.expense_category = expense_category
 
         self._db.commit()
