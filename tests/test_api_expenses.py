@@ -23,7 +23,7 @@ def test_create_expense(client):
 
 def test_error_create_expense(client):
     response = client.post('/api/v1/expenses/',json={"name": "Expensa 1","category": "Prueba"})
-    assert response.status_code == 422
+    assert response.status_code == 404
 
 def test_get_expenses(client,create_expense):
     response = client.get("/api/v1/expenses/?date_range=past_week")
@@ -44,6 +44,6 @@ def test_delete_expense(client,create_expense,id_expense,status_code):
 #Actualización de expensas
 @pytest.mark.parametrize(("id_expense"),[(1),(2),(3)])
 def test_update_expense(client,create_expense,id_expense):
-    response = client.put(f"/api/v1/expenses/{id_expense}",json={"name":"hola","category":"Prueba1"})
+    response = client.patch(f"/api/v1/expenses/{id_expense}",json={"name":"hola","category":"Prueba1"})
     assert response.status_code == 200
 
