@@ -55,8 +55,6 @@ class ExpenseServices:
         expenses = self._db.query(Expense).filter(Expense.createdAt >= start_date,
                                               Expense.createdAt < tomorrow,
                                               Expense.id_user == current_user_id).all()
-        # for e in expenses:
-        #     print(e.createdAt)
         return expenses
 
     def create_expense(self,expense_in:ExpenseIn,user_id:int) -> Expense | None:
