@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+from typing import List
 import pytest
 from sqlalchemy import StaticPool, create_engine
 from sqlalchemy.orm import sessionmaker
@@ -51,6 +53,28 @@ def create_expense(db_session):
         Expense(name='Expensa 3 U1', id_user=1,id_category=2),
         Expense(name='Expensa 1 U2', id_user=2,id_category=1)
     ]
+
+    db_session.add_all(expenses)
+    db_session.commit()
+
+@pytest.fixture
+def create_expenses_datetimes(db_session):
+    # Voy a crear 4 expenses con cada fecha.
+    dates_dict:dict[str,datetime] = {}
+    dates_dict["today"] = datetime.now(timezone.utc)
+    dates_dict["today_week"] = dates_dict["today"] - timedelta(days=7) 
+    dates_dict["today_month"] = dates_dict["today"] - timedelta(days=30)
+    dates_dict["today_three_months"] = dates_dict["today"] - timedelta(days=90)
+    
+    expenses:List[Expense] = []
+    for date_type,date_value in dates_dict.items():
+        exps = [
+            Expense(name=f'Expensa 1 U1 {date_type}', createdAt=date_value, id_user=1, id_category=1),
+            Expense(name=f'Expensa 2 U1 {date_type}', createdAt=date_value, id_user=1, id_category=2),
+            Expense(name=f'Expensa 3 U1 {date_type}', createdAt=date_value, id_user=1, id_category=2),
+            Expense(name=f'Expensa 1 U2 {date_type}', createdAt=date_value, id_user=2, id_category=1)
+        ]
+        expenses+=exps
 
     db_session.add_all(expenses)
     db_session.commit()
