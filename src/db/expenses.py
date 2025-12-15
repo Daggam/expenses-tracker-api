@@ -18,7 +18,7 @@ class Expense(Base):
     id_category:Mapped[int] = mapped_column(ForeignKey('expense_category.id'))
     id_user:Mapped[int] = mapped_column(ForeignKey('user.id'))
     name:Mapped[str] = mapped_column(String(50))
-    createAt:Mapped[DateTime] = mapped_column(DateTime(timezone=True),server_default=func.now())
+    createdAt:Mapped[DateTime] = mapped_column(DateTime(timezone=True),server_default=func.now())
     
     #Relationships
     expense_category:Mapped['ExpenseCategory'] = relationship(back_populates='expenses')

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, Query,HTTPException
+from datetime import date
+from fastapi import APIRouter, Depends, Query
 from typing import Annotated
-from pydantic import PastDate
 from src.models.expenses import ExpenseRangeType,ExpenseIn, ExpenseUpdate
 from src.services.expenses import ExpenseServices
 from src.db.db import SessionFactory
@@ -23,11 +23,11 @@ def create_expense(
 def get_expenses(
     date_range: ExpenseRangeType,
     current_user:CurrentUser,
-    start_date: Annotated[PastDate | None,Query(description='Necesario si date_range es custom')] = None,
-    end_date: Annotated[PastDate | None, Query(description='Necesario si date_range es custom')] = None,
+    start_date: Annotated[date | None,Query(description='Necesario si date_range es custom')] = None,
+    end_date: Annotated[date | None, Query(description='Necesario si date_range es custom')] = None,
     service:ExpenseServices = Depends(get_expense_service)
 ):
-    return service.get_expenses(date_range,start_date,end_date,current_user_id=current_user)
+    return service.get_expenses(date_range,current_user,start_date,end_date)
 
 @router.delete("/{expense_id}")
 def delete_expense(
