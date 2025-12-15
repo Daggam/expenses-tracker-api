@@ -95,14 +95,14 @@ def test_get_expenses_non_custom_error(client,range_type,start_date,end_date):
     msg = response.json()
     assert msg["message"] == "start_date and end_date filter is only available when custom option is setted."
 
-@pytest.mark.parametrize(("id_expense","status_code"),[(1,200),(99,404)])
+@pytest.mark.parametrize(("id_expense","status_code"),[(1,204),(99,404)])
 def test_delete_expense(client,create_expense,id_expense,status_code):
     response = client.delete(f"/api/v1/expenses/{id_expense}")
     assert response.status_code == status_code
     response = client.get("/api/v1/expenses/?date_range=past_week")
     assert response.status_code == 200
     expenses = response.json()
-    assert len(expenses) == (2 if status_code == 200 else 3)
+    assert len(expenses) == (2 if status_code == 204 else 3)
 
 #Actualización de expensas
 @pytest.mark.parametrize(("id_expense"),[(1),(2),(3)])
