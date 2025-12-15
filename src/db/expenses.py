@@ -23,3 +23,7 @@ class Expense(Base):
     #Relationships
     expense_category:Mapped['ExpenseCategory'] = relationship(back_populates='expenses')
     user:Mapped['User'] = relationship(back_populates='expenses')
+
+    @property
+    def category(self):
+        return self.expense_category.category

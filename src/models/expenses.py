@@ -1,6 +1,7 @@
 from datetime import date
+import datetime
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_validator
 
 class ExpenseRangeType(str,Enum):
     PAST_WEEK = 'past_week'
@@ -12,6 +13,12 @@ class ExpenseOut(BaseModel):
     name:str
     category:str
     createdAt:date
+
+    model_config = ConfigDict(from_attributes=True)
+    @field_validator('createdAt',mode='before')
+    @classmethod
+    def cast_datetime_to_date(cls,value:datetime) -> date:
+        return value.date()
 
 class ExpenseIn(BaseModel):
     name:str
