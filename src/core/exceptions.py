@@ -28,3 +28,9 @@ class InvalidModelError(BaseAPIException):
         super().__init__(message="The model is invalid.",
                          error_code="invalid_model",
                          status_code=422)
+
+class UserNotFoundError(BaseAPIException):
+    def __init__(self):
+        super().__init__(message="The user not found.",
+                         error_code="user_not_found",
+                         status_code=404)
