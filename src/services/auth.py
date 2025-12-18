@@ -1,4 +1,5 @@
 from datetime import timedelta
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from src.core.exceptions import BaseAPIException,UserNotFoundError
@@ -13,9 +14,12 @@ class AuthService():
 
     def register(self,user_in:UserIn) -> User:
         #Nos fijamos si ya existe el usuario.
-        user = self._db.query(User.id).filter(User.email == user_in.email).one_or_none()
+        user = self._db.query(User).filter(or_(User.email == user_in.email,User.username == user_in.username)).one_or_none()
         if user is not None:
-            raise BaseAPIException(message="The email has already been registered.")
+            if user.email == user_in.email:
+                raise BaseAPIException(message="The email has already been registered.")
+            elif user.username == user_in.username:
+                raise BaseAPIException(message="The username has already been registered.")
         
         password_hashed = get_password_hash(user_in.password)
 
@@ -26,7 +30,6 @@ class AuthService():
 
     def login(self,form_data:OAuth2PasswordRequestForm) -> TokenOut:
         user = self._db.query(User).filter(User.username == form_data.username).one_or_none()
-        print(user)
         if user is None or not verify_password(form_data.password,user.password_hash):
             raise BaseAPIException(message="Username or password incorrect.",status_code=401)
         data = {"sub":str(user.id)}
