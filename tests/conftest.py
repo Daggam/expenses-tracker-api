@@ -26,8 +26,8 @@ def setup_database():
      session.add_all(categorias)
      ## Creamos usuarios de prueba
      users = [
-         User(username='daggam',email='benjaminvilla409@gmail.com',password_hash='123456'),
-         User(username='benja',email='daggamarg@gmail.com',password_hash='123456'),
+         User(username='daggam',email='benjaminvilla409@gmail.com',password_hash='$2b$12$SZXTTKtoR8kNRZz.u4rGKO9kvBhqCQGU8JG4y6N/Lnb95HgtTuTWm'), # contraseña:Aa!456789
+         User(username='benja',email='daggamarg@gmail.com',password_hash='$2b$12$SZXTTKtoR8kNRZz.u4rGKO9kvBhqCQGU8JG4y6N/Lnb95HgtTuTWm'),
          ]
      session.add_all(users)
      session.commit()

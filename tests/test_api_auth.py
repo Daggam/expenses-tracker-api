@@ -3,6 +3,8 @@ from src.db.users import User
 from src.main import app
 from src.api.V1.auth import get_auth_service
 from src.services.auth import AuthService
+from src.core.config import settings
+from jose import jwt
 import pytest
 
 @pytest.fixture()
@@ -60,3 +62,34 @@ def test_create_user_errors(client,email,password,expected_message):
 
     res = response.json()
     assert res["detail"][0]["msg"] == expected_message
+
+@pytest.mark.parametrize("username, id_user",[("daggam","1"),("benja","2")])
+def test_create_token(client,username,id_user):
+    headers = {'Content-Type':"application/x-www-form-urlencoded"}
+
+    data = {
+        "username":username,
+        "password":"Aa!456789"
+        }
+    response = client.post("/api/v1/auth/login",
+                           headers = headers,
+                           data=data
+                           )
+    assert response.status_code == 200
+    access_token = response.json()["access_token"]
+    jwt_decoded = jwt.decode(access_token,settings.SECRET_KEY,settings.ALG_JWT)
+    assert jwt_decoded["sub"] == id_user
+
+@pytest.mark.parametrize("username,password",[("cualquiera","Aa!456789"),("daggam","123456789")])
+def text_create_token_error(client,username,password):
+    headers = {'Content-Type':"application/x-www-form-urlencoded"}
+
+    data = {
+        "username":username,
+        "password":password
+        }
+    response = client.post("/api/v1/auth/login",
+                           headers = headers,
+                           data=data
+                           )
+    assert response.status_code == 401
