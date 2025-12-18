@@ -63,6 +63,49 @@ def test_create_user_errors(client,email,password,expected_message):
     res = response.json()
     assert res["detail"][0]["msg"] == expected_message
 
+def test_create_user_two_times_errors(client):
+    headers = {'Content-Type':"application/x-www-form-urlencoded"}
+    data = {
+        "username":"gonza",
+        "email":"gonza@gmail.com",
+        "password":"Aa!456789"
+        }
+    response = client.post("/api/v1/auth/register",
+                           headers = headers,
+                           data=data
+                           )
+    assert response.status_code == 201
+    #PROBAMOS SI PODEMOS CREAR EL MISMO USUARIO 
+    response = client.post("/api/v1/auth/register",
+                           headers = headers,
+                           data=data
+                           )
+    assert response.status_code == 400
+
+    #PROBAMOS SI PODEMOS CREAR UN USUARIO CON EL MISMO CORREO ELECTRONICO:
+    data_change_username = data.copy()
+    data_change_username["username"] = "gonza_copy"
+    response = client.post("/api/v1/auth/register",
+                           headers = headers,
+                           data=data_change_username
+                           )
+    
+    assert response.status_code == 400
+    res = response.json()
+    assert res["message"] == "The email has already been registered."
+    
+    #PROBAMOS SI PODEMOS CREAR UN USUARIO CON EL MISMO NOMBRE DE USUARIO:
+    data_change_email = data.copy()
+    data_change_email["email"] = "gonza_copy@gmail.com"
+    response = client.post("/api/v1/auth/register",
+                           headers = headers,
+                           data=data_change_email
+                           )
+    assert response.status_code == 400
+    res = response.json()
+    assert res["message"] == "The username has already been registered."
+
+
 @pytest.mark.parametrize("username, id_user",[("daggam","1"),("benja","2")])
 def test_create_token(client,username,id_user):
     headers = {'Content-Type':"application/x-www-form-urlencoded"}
