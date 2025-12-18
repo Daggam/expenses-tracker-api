@@ -4,14 +4,19 @@ import pytest
 from src.main import app
 from src.services.expenses import ExpenseServices
 from src.api.V1.expenses import get_expense_service
+from src.api.deps import get_current_user
 from src.core.exceptions import BaseAPIException
 
 @pytest.fixture
 def client(db_session):
     def override_get_expense_service():
         return ExpenseServices(session=db_session)
+    
+    def override_get_current_user():
+        return 1
+    
     app.dependency_overrides[get_expense_service] = override_get_expense_service
-
+    app.dependency_overrides[get_current_user] = override_get_current_user
     with TestClient(app) as c:
         yield c
 
