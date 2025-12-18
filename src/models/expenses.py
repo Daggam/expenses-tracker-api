@@ -10,6 +10,7 @@ class ExpenseRangeType(str,Enum):
     CUSTOM = 'custom'
 
 class ExpenseOut(BaseModel):
+    id:int
     name:str
     category:str
     createdAt:date
