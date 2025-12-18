@@ -16,7 +16,7 @@ def create_expense(
     current_user:CurrentUser,
     service:ExpenseServices = Depends(get_expense_service)
 ):
-    expense = service.create_expense(expense_in,user_id=current_user) #SOLO POR AHORA SERÁ user_id=1
+    expense = service.create_expense(expense_in,user_id=current_user)
     return expense
 
 @router.get("/",response_model=List[ExpenseOut])

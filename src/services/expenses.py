@@ -59,16 +59,15 @@ class ExpenseServices:
 
     def create_expense(self,expense_in:ExpenseIn,user_id:int) -> Expense | None:
         expense_category = self._db.query(ExpenseCategory).filter(ExpenseCategory.category == expense_in.category).first()
-        user = self._db.query(User).filter(User.id == user_id).first()
-        if expense_category is None: #or user is None:
+        if expense_category is None:
             raise ExpenseCategoryNotFoundError(expense_in.category)
-
         expense = Expense(name=expense_in.name)
         expense.expense_category = expense_category
-        expense.user = user
+        expense.id_user = user_id
         self._db.add(expense)
         self._db.commit()
         self._db.refresh(expense)
+
         return expense        
 
     def delete_expense(self,expense_id:int,user_id:int) -> bool:
