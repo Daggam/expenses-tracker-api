@@ -1,7 +1,7 @@
 [project]
-name = "python"
-version = "0.1.0"
-description = "Add your description here"
+name = "Expenses-Tracker-API"
+version = "1.0.0"
+description = "A REST API to manage expenses"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -10,6 +10,7 @@ dependencies = [
     "email-validator>=2.3.0",
     "fastapi>=0.124.0",
     "httpx>=0.28.1",
+    "psycopg2>=2.9.11",
     "pydantic-settings>=2.12.0",
     "pytest>=9.0.1",
     "python-jose>=3.5.0",

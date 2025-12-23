@@ -31,6 +31,5 @@ def downgrade() -> None:
     """Downgrade schema."""
     meta = sa.MetaData()
     expense_category = sa.Table('expense_category',meta,autoload_with=op.get_bind())
-    op.drop_table(expense_category)
-    op.create_table('expense_category',expense_category)
-    pass
+    stmt = sa.delete(expense_category)
+    op.execute(stmt)

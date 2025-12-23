@@ -38,7 +38,7 @@ def upgrade() -> None:
     sa.Column('id_category', sa.Integer(), nullable=False),
     sa.Column('id_user', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
-    sa.Column('createAt', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('createdAt', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.ForeignKeyConstraint(['id_category'], ['expense_category.id'], ),
     sa.ForeignKeyConstraint(['id_user'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
