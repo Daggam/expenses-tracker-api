@@ -24,8 +24,8 @@ Expenses Tracker is a robust REST API built with **FastAPI**, **SQLAlchemy**, an
 First, clone the repository to your local machine:
 
 ```Bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/Daggam/expenses-tracker-api.git
+cd expenses-tracker-api
 ```
 
 You can build and run the project in two ways: [Manually (Local)](#option-1-manual-installation) or using [Docker](#option-2-docker-recommended).
