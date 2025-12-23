@@ -13,7 +13,7 @@ Expenses Tracker is a robust REST API built with **FastAPI**, **SQLAlchemy**, an
 
 ## Tech Stack
 
-- [FastAPI](https://fastapi.tiangolo.com/)c
+- [FastAPI](https://fastapi.tiangolo.com/)
 - [SQLAlchemy](https://www.sqlalchemy.org/)
 - [Alembic](https://alembic.sqlalchemy.org/)
 - [uv](https://docs.astral.sh/uv/)
